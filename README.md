@@ -4,7 +4,7 @@ libgba provides almost everything you need to drive the GBA graphical capabiliti
 
 You just have to download the GBAdv C source and put it with your project sources. Modify it if you wish/need it! Just please let me know if you find any bug.
 
-Here's a list of the functions that are defined. Full documentation is available [here](https://github.com/sverx/GBAdv/blob/master/GBAdv.html)
+Here's a list of the functions that are defined. Full documentation is available [here](https://github.com/sverx/GBAdv/blob/master/doc/GBAdv.html)
 
 Video Mode functions:
 
