@@ -1,0 +1,757 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+  <title>GBAdv - GameBoyAdvance graphical core registers wrapper functions...
+  and a bit more.</title>
+  <meta name="generator" content="Amaya, see http://www.w3.org/Amaya/">
+  <style type="text/css" title="Amaya theme">
+/* Classic style for Amaya Editor Lite */
+
+/* default rules for the whole document */
+body {
+    font-size: 12pt;
+    font-family: Times, serif;
+    font-weight: normal;
+    font-style: normal;
+    color: black;
+    background-color: white;
+    line-height: 1em;
+    margin-left: 4em;
+    margin-right: 2em;
+   }
+
+/* paragraphs */
+p  {
+    padding: 0;
+    margin-top: 0em;
+    margin-bottom: 1em;
+    text-align: justify;
+   }
+
+/* headings */
+h1 {
+    background-color: #e8e1e1;
+    font-size: 150%;
+    font-weight: bold;
+    font-style: normal;
+    font-variant: normal;
+    text-align: center;
+    padding: .5em;
+    margin-top: .7em;
+    margin-bottom: 1.2em;
+   }
+h2 {
+    font-size: 130%;
+    font-weight: bold;
+    font-style: normal;
+    padding: 0;
+    margin-top: .7em;
+    margin-bottom: .7em;
+   }
+h3 {
+    font-size: 100%;
+    font-weight: bold;
+    font-style: normal;
+    padding: 0;
+    margin-top: .5em;
+    margin-bottom: .5em;
+   }
+h4 {
+    font-size: 100%;
+    font-weight: bold;
+    font-style: normal;
+    padding: 0;
+    margin-top: .3em;
+    margin-bottom: .3em;
+   }
+h5 {
+    font-size: 100%;
+    font-weight: bold;
+    font-style: italic;
+    padding: 0;
+    margin-top: .3em;
+    margin-bottom: .3em;
+   }
+h6 {
+    font-size: 100%;
+    font-weight: bold;
+    font-style: normal;
+    padding: 0;
+    margin-top: .3em;
+    margin-bottom: .3em;
+   }
+
+/* divisions */
+div {
+    padding: 0;
+    margin-top: 0em;
+    margin-bottom: 0em;
+   }
+
+/* lists */
+ul, ol {
+    padding: 0 0 0 2em;
+    margin-top: .1em;
+    margin-bottom: .1em;
+   }
+ul ul, ol ol, ul ol, ol ul {
+    margin-top: .1em;
+    margin-bottom: .1em;
+   }
+li {
+    padding: 0;
+    margin-top: .1em;
+    margin-bottom: .1em;
+    text-align: justify;
+   }
+li p {
+    margin-top: .1em;
+    margin-bottom: .1em;
+   }
+dl {
+    padding: 0;
+    margin-top: .1em;
+    margin-bottom: .1em;
+    margin-left: 1em;
+   }
+dl dl {
+    margin-top: .1em;
+    margin-bottom: .1em;
+   }
+dt {
+    padding: 0;
+    font-weight: bold;
+    margin-top: .1em;
+    margin-bottom: .1em;
+   }
+dd {
+    padding: 0;
+    margin-top: .1em;
+    margin-left: 1.5em;
+    margin-bottom: .1em;
+   }
+dl p {
+    margin-top: .1em;
+    margin-bottom: .1em;
+   }
+th {
+    background-color: #e8e1e1;
+   }
+
+/* inline */
+strong {
+    font-weight: bold;
+   }
+em {
+    font-style: italic;
+   }
+code {
+    font-family: Courier New, Courier, monospace;
+    font-size: 10pt;
+    background-color: #f0f0f0;
+   }
+ins {
+    background-color: inherit;
+    text-decoration: underline;
+   }
+del {
+    text-decoration: line-through;
+   }
+
+/* anchors */
+a[href] {
+    color: purple;
+    text-decoration: underline;
+   }
+
+/* end */
+  </style>
+</head>
+
+<body>
+<h1><span style="font-size: 26pt">GBAdv<span style="font-family: Courier New,Courier,monospace"></span></span><br>
+<br>
+GameBoyAdvance graphical core registers wrapper functions... and a bit
+more.</h1>
+
+<h2>Intro</h2>
+
+<p><em>libgba</em> provides almost everything you need to drive the GBA
+graphical capabilities, but it forces the programmer to do so in a very low
+level fashion, thru direct access to the GBA internal registers. This is the
+reason I made GBAdv, a collection of wrapper functions (and a bit more) which
+are useful to abstract from that low level, and finally let more enthusiast
+homebrewers into GBA programming.</p>
+
+<p>You can download the GBAdv C source <a href="https://github.com/sverx/GBAdv">here</a>
+<em>(GitHub repository for GBAdv created October 30, 2014)</em> and just
+put it with your project sources. Modify it if you wish/need it! Just please
+let me know if you find any bug. Please open an issue on GitHub or mail me to sverx
+at yahoo com in case.</p>
+
+<h2>Video Mode functions</h2>
+
+<p>There's a single dedicated function to set a specific video mode which it
+also sets how the graphical engine will utilize object memory. <sup><em>note: I
+might split this into two separate functions sooner or later</em></sup></p>
+
+<p><code>void initDisplay (unsigned int mode, int
+boolean_object_mapping_style_1D)</code></p>
+
+<p>Valid values for <em>mode</em> are:</p>
+
+<p><code>DISPLAY_4TEXT<br>
+DISPLAY_2TEXT1AFFINE<br>
+DISPLAY_2AFFINE<br>
+DISPLAY_1BITMAP15BPP_1FRAME<br>
+DISPLAY_1BITMAP8BPP_2FRAMES<br>
+DISPLAY_1SMALLBITMAP15BPP_2FRAMES</code></p>
+
+<p>or the corresponding (but cryptic) <em>libgba</em> modes</p>
+
+<p><code>MODE_0<br>
+MODE_1<br>
+MODE_2<br>
+MODE_3<br>
+MODE_4<br>
+MODE_5</code></p>
+
+<p><em>boolean_object_mapping_style_1D</em> is a boolean value that specify if
+you want to use 1D mapping (<em>true</em>) or 2D mapping (<em>false</em>). For
+your convenience you can use one of the two defines</p>
+
+<p><code>OBJECT_MAPPING_1D<br>
+OBJECT_MAPPING_2D</code></p>
+
+<p>Note that this function also turns off backgrounds and sprites.</p>
+
+<p>You can read the details about each video mode features <a href="http://problemkaputt.de/gbatek.htm#lcdiodisplaycontrol">here</a>
+(GBAtek).</p>
+
+<p>Here's a quick reference table of the video modes and the associated
+backgrounds. <em>Text</em> means text mode background, <em>Affine</em> means
+affine mode background, <em>Bitmap</em> means a bitmap background,
+<em>(dis)</em> means that the background isn't available in that mode:</p>
+
+<table border="1" cellspacing="0" cellpadding="2">
+  <colgroup><col>
+  <col>
+  <col>
+  <col>
+  <col>
+  </colgroup><tbody>
+    <tr>
+      <td># - Mode</td>
+      <td>Background 0</td>
+      <td>Background 1</td>
+      <td>Background 2</td>
+      <td>Background 3</td>
+    </tr>
+    <tr>
+      <td>0 - <code>DISPLAY_4TEXT</code></td>
+      <td>Text</td>
+      <td>Text</td>
+      <td>Text</td>
+      <td>Text</td>
+    </tr>
+    <tr>
+      <td>1 - <code>DISPLAY_2TEXT1AFFINE</code></td>
+      <td>Text</td>
+      <td>Text</td>
+      <td>Affine</td>
+      <td>(dis)</td>
+    </tr>
+    <tr>
+      <td>2 - <code>DISPLAY_2AFFINE</code></td>
+      <td>(dis)</td>
+      <td>(dis)</td>
+      <td>Affine</td>
+      <td>Affine</td>
+    </tr>
+    <tr>
+      <td>3 - <code>DISPLAY_1BITMAP15BPP_1FRAME</code></td>
+      <td>(dis)</td>
+      <td>(dis)</td>
+      <td>Bitmap</td>
+      <td>(dis)</td>
+    </tr>
+    <tr>
+      <td>4 - <code>DISPLAY_1BITMAP8BPP_2FRAMES</code><br>
+      </td>
+      <td>(dis)</td>
+      <td>(dis)</td>
+      <td>Bitmap (2 frames)</td>
+      <td>(dis)</td>
+    </tr>
+    <tr>
+      <td>5 - <code>DISPLAY_1SMALLBITMAP15BPP_2FRAMES</code></td>
+      <td>(dis)</td>
+      <td>(dis)</td>
+      <td>Bitmap (2 frames)</td>
+      <td>(dis)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p></p>
+
+<h2>Background functions</h2>
+
+<p>Backgrounds supported in the chosen video mode need to be configured, and
+can be activated and/or deactivated.</p>
+
+<p>To configure a background, there's a dedicated function:</p>
+
+<p><code>void configureBackground (unsigned int background_number, unsigned int
+mode, unsigned int maps, unsigned int tiles)</code></p>
+
+<p><em>background_number</em> is 0 thru 3, according to the video mode</p>
+
+<p><em>mode</em> is one of the following values, with size units specified in
+tiles (each tile is 8x8 pixel)</p>
+
+<p><code>BACKGROUND_TEXT_32x32<br>
+BACKGROUND_TEXT_64x32<br>
+BACKGROUND_TEXT_32x64<br>
+BACKGROUND_TEXT_64x64<br>
+BACKGROUND_AFFINE_16x16<br>
+BACKGROUND_AFFINE_32x32<br>
+BACKGROUND_AFFINE_64x64<br>
+BACKGROUND_AFFINE_128x128</code></p>
+
+<p>there are also some flags that can be added ('OR-ed') to these values. They
+are:</p>
+
+<p><code>BACKGROUND_16COLORS<br>
+BACKGROUND_256COLORS</code></p>
+
+<p>to define background tiles color depth (text backgrounds only, affine
+backgrounds are always 256 colors)</p>
+
+<p><code>BACKGROUND_WRAP</code></p>
+
+<p>to activate background wrapping (affine backgrounds only, text backgrounds
+are always wrapping)</p>
+
+<p><code>BACKGROUND_MOSAIC</code></p>
+
+<p>to activate mosaic effect on the background</p>
+
+<p><code>BACKGROUND_PRIO(n)</code></p>
+
+<p>and the priority macro, to specify a priority value (0 to 3) where lower
+means 'on-top' and higher means 'behind'</p>
+
+<p><em>maps</em> specify where the map(s) for the background are stored. Values
+are from 0 to 31.</p>
+
+<p><em>tiles</em> specify where the tiles for the background are stored. Values
+are from 0 to 3.</p>
+
+<p>You can read the details about each background features <a href="http://problemkaputt.de/gbatek.htm#lcdiobgcontrol">here</a> (GBAtek) and
+<a href="http://www.coranac.com/tonc/text/regbg.htm">here</a> (Tonc).</p>
+
+<p><em>Example usage:</em></p>
+
+<p><code>configureBackground (0, BACKGROUND_TEXT_64x64 | BACKGROUND_256COLORS |
+BACKGROUND_PRIO(1), 2, 1);</code></p>
+
+<p>configures background 0 as a text background of 64x64 256 colors tiles with
+priority=1 using the maps that start at '2' (so the 3<sup>rd</sup>,
+4<sup>th</sup>, 5<sup>th</sup> and 6<sup>th</sup> map) and the tiles that start
+at '1' (16Kb offset in Video RAM).</p>
+
+<p>To activate/deactivate backgrounds there are four different functions:</p>
+
+<p><code>void showBackgrounds (unsigned int which)<br>
+void toggleBackgrounds (unsigned int show, unsigned int hide)<br>
+void toggleBackgroundsOn (unsigned int show)<br>
+void toggleBackgroundsOff (unsigned int hide)</code></p>
+
+<p><em>showBackgrounds</em> activates the background(s) specified with the
+<em>which</em> parameter, turning off all the other backgrounds.</p>
+
+<p><em>toggleBackgrounds</em> activates the background(s) specified with the
+<em>show</em> parameter, <em>hides</em> the background(s) specified with the
+hide parameter, leaves all the other backgrounds in the same state.</p>
+
+<p><em>toggleBackgroundsOn</em> activates the background(s) specified with the
+<em>show</em> parameter and leaves all the other backgrounds in the same
+state.</p>
+
+<p><em>toggleBackgroundsOff</em> deactivates the background(s) specified with
+the <em>hide</em> parameter and leaves all the other backgrounds in the same
+state.</p>
+
+<p>Valid values for <em>which</em>, <em>show</em> and <em>hide</em> parameters
+are the following:</p>
+
+<p><code>BACKGROUND_NONE<br>
+BACKGROUND_0<br>
+BACKGROUND_1<br>
+BACKGROUND_2<br>
+BACKGROUND_3</code></p>
+
+<p>To scroll text backgrounds there's a function, which doesn't work for affine
+backgrounds:</p>
+
+<p><code>void scrollBackground (unsigned int background_number, int scroll_x,
+int scroll_y)</code></p>
+
+<p><em>background_number</em> is 0 thru 3, according to the video mode</p>
+
+<p><em>scroll_x</em> and <em>scroll_y</em> are the requested scroll parameters,
+in pixels.</p>
+
+<p>For affine backgrounds (which can be only backgrounds 2 and 3) there are two
+functions for each one, the former to specify affine matrix and the latter to
+specify reference point (scroll):</p>
+
+<p><code>void configureBackground2AffineMatrix (int dx, int dmx, int dy, int
+dmy)<br>
+void configureBackground3AffineMatrix (int dx, int dmx, int dy, int dmy)<br>
+void configureBackground2ReferencePoint (int x, int y)<br>
+void configureBackground3ReferencePoint (int x, int y)</code></p>
+
+<p>All the parameters are fixed point decimals with 8 bits for the fractional
+part.</p>
+
+<p>You can read the details about affine backgrounds <a href="http://www.coranac.com/tonc/text/affbg.htm">here</a> (Tonc)</p>
+
+<p>[<strong>TO DO</strong>: a function to switch frame in mode4 and mode5]</p>
+
+<h2>Sprite functions</h2>
+
+<p>There are up to 128 objects (sprites) that you can use at the same time.
+These functions help in managing them.</p>
+
+<p>To enable/disable sprites, there's a dedicated function:</p>
+
+<p><code>void showSprites (int boolean_active)</code></p>
+
+<p><em>boolean_active</em> is the only parameter, if its value it's 0 (zero)
+then sprites will be disabled. Any other value enable the sprites.</p>
+
+<p>GBAdv manages sprites thru an internal copy of the objects you want to
+define and includes functions to initialize that internal objects copy,
+add/modify objects and finalize them before calling the function to copy these
+objects to the GBA OAM (object attribute memory).</p>
+
+<p>There are three functions for choosing in which order the objects will be
+defined, front to back or (unsuggested) back to front:</p>
+
+<p><code>void initSprites (int boolean_back_to_front)<br>
+void initSpritesFrontToBack (void)<br>
+void initSpritesBackToFront (void)</code></p>
+
+<p><em>boolean_back_to_front</em> is the only parameter of the first function.
+If its value it's 0 (zero) then objects will be allocated front-to-back. Any
+other value starts allocating them back to front. Use the other two functions
+whenever possible, it's just easier.</p>
+
+<p>There are then two functions to add an object:</p>
+
+<p><code>int addSprite (int x, int y, unsigned int image, unsigned int
+properties)<br>
+int reserveSprite (void)</code></p>
+
+<p>and two functions to modify an already allocated object:</p>
+
+<p><code>void setSpriteProperties (unsigned int sprite, unsigned int image,
+unsigned int properties)<br>
+int setSpritePosition (unsigned int sprite, int x, int y)</code></p>
+
+<p>The <em>addSprite</em> function is the most important function of the four
+described here. It supports clipping, so when an object would be completely
+offscreen, it will return an error and won't allocate anything. Normally it
+will return an handle to the allocated object, but it will also return an error
+if there's no more room for other objects. The two errors are defined by the
+two constants:</p>
+
+<p><code>SPRITE_CLIPPED<br>
+NO_SPRITES_LEFT</code></p>
+
+<p><em>x</em> and <em>y</em> are the parameters that define the location of the
+top-left corner of the sprite.</p>
+
+<p><em>image</em> is the tile number of the sprite, or the 1<sup>st</sup> tile
+number when sprite is bigger than a single tile.</p>
+
+<p><em>properties</em> is the mask which defines the object properties (type,
+size, colors, etc.). An object must be of one of the following types:</p>
+
+<p><code>SPRITE_TYPE_NORMAL<br>
+SPRITE_TYPE_ROTSCALE<br>
+SPRITE_TYPE_ROTSCALE_DOUBLE<br>
+SPRITE_TYPE_DISABLED</code></p>
+
+<p>and must have one of the following (12 different) sizes (in pixel):</p>
+
+<p><code>SPRITE_8x8<br>
+SPRITE_16x16<br>
+SPRITE_32x32<br>
+SPRITE_64x64<br>
+SPRITE_16x8<br>
+SPRITE_8x16<br>
+SPRITE_32x8<br>
+SPRITE_8x32<br>
+SPRITE_32x16<br>
+SPRITE_16x32<br>
+SPRITE_64x32<br>
+SPRITE_32x64</code></p>
+
+<p>and it can be an object using 16 or 256 colors:</p>
+
+<p><code>SPRITE_16COLORS<br>
+SPRITE_256COLORS</code></p>
+
+<p>the object then, optionally, can have a specific palette (values from 0 to
+15, it works only on 16 colors objects) using the following macro:</p>
+
+<p><code>SPRITE_PAL(n)</code></p>
+
+<p>and it can have a priority (if it needs to be different from 0) using this
+macro:</p>
+
+<p><code>SPRITE_PRIO(n)</code></p>
+
+<p>There are also two flags that are necessary for flipping the object
+horizontally/vertically:</p>
+
+<p><code>SPRITE_FLIPX<br>
+SPRITE_FLIPY</code></p>
+
+<p>a flag to make the sprite semi-transparent:</p>
+
+<p><code>SPRITE_TRANSPARENT</code></p>
+
+<p>another flag to apply mosaic effect on the object:</p>
+
+<p><code>SPRITE_MOSAIC</code></p>
+
+<p>and there's also a flag to mark this object as an <em>object window</em>
+(note: it can't be used together with semi-transparency flag):</p>
+
+<p><code>SPRITE_WINDOW</code></p>
+
+<p>Finally, for the <em>rotscale</em> and <em>rotscale_double</em> object,
+there's a macro to assign it an affine matrix:</p>
+
+<p><code>SPRITE_AFFINE_MATRIX(n)</code></p>
+
+<p>The <em>reserveSprite</em> function instead reserve a slot (allocating a
+<em>disabled</em> object of the smallest size and placing it offscreen) so that
+you can fully define that object at a later stage. The function returns the
+handle for the object, and it fails if there's no more space for objects, just
+like the <em>addSprite</em> function.</p>
+
+<p>The <em>setSpriteProperties</em> function (re)defines the properties of an
+object that's been already allocated using either <em>reserveSprite</em> or
+<em>addSprite</em> functions. It doesn't perform any clipping and it doesn't
+return any handle or error.</p>
+
+<p><em>sprite</em> is the handle previously returned by a previous call to
+<em>reserveSprite</em> or to <em>addSprite</em> functions.</p>
+
+<p><em>image</em> and <em>properties</em> are the same parameters that the
+<em>addSprite</em> function needs.</p>
+
+<p>Finally, <em>setSpritePosition</em> function changes the position of an
+object that's been already allocated using either <em>reserveSprite</em> or
+<em>addSprite</em> functions. It performs clipping, and will disable sprites
+that would fall completely offscreen. It will return the same
+<em>addSprite</em> error in case of clipping, or the same handle provided.</p>
+
+<p><em>sprite</em> is the handle previously returned by a previous call to
+<em>reserveSprite</em> or to <em>addSprite</em> functions.</p>
+
+<p><em>x</em> and <em>y</em> are the parameters that define the location of the
+top-left corner of the sprite.</p>
+
+<p><em>Example usage:</em></p>
+
+<p><code>int my_hero_object = addSprite (my_hero_x, my_hero_y,
+MY_HERO_STANDING_SPRITE_0, SPRITE_TYPE_NORMAL | SPRITE_16x32 | SPRITE_16COLORS
+| SPRITE_PAL(MY_HERO_PALETTE));</code></p>
+
+<p>There are then two functions to add/modify affine matrices (up to 32 affine
+matrices can be allocated):</p>
+
+<p><code>int addObjectAffineMatrix (int pa, int pb, int pc, int pd)<br>
+void setObjectAffineMatrix (unsigned int matrix, int pa, int pb, int pc, int
+pd)</code></p>
+
+<p>the first function returns the handle of the allocated matrix or the
+error</p>
+
+<p><code>NO_AFFINE_MATRIX_LEFT</code></p>
+
+<p>in case of allocating more than 32 matrices.</p>
+
+<p>The returned handle is the value to be used in <em>addSprite</em> /
+<em>setSpriteProperties</em> properties parameter, using the designated
+macro.</p>
+
+<p><em>pa</em>, <em>pb</em>, <em>pc</em>, <em>pd</em> are the fixed point
+values for the affine matrix. These are fixed point decimals with 8 bits for
+the fractional part.</p>
+
+<p><em>matrix</em> is the handle of the affine matrix whose valules have to be
+set.</p>
+
+<p>When all the needed affine matrices and sprites have been added it's
+mandatory to call the function that closes the allocations:</p>
+
+<p><code>void finalizeSprites (void)</code></p>
+
+<p>this function also deactivates the remaining sprites, in case they were used
+in a previous run.</p>
+
+<p>Finally, when the right time comes (usually after a VBlank) there's a
+function to call to make a copy of all the defined objects into GBA internal
+OAM:</p>
+
+<p><code>void copySpritesToOAM (void)</code></p>
+
+<p>This function uses a BIOS call instead of using a DMA copy. It's a bit
+slower but it frees up the DMA for other more important uses. After all, the
+function copies just a single kilobyte.</p>
+
+<p>You can read the details about sprites <a href="http://problemkaputt.de/gbatek.htm#lcdobjoverview">here</a> (GBAtek) and
+<a href="http://www.coranac.com/tonc/text/regobj.htm">here</a> (Tonc)</p>
+
+<h2>Other functions</h2>
+
+<p>There are three functions to manage special effects and how they affect the
+elements on screen. These are:</p>
+
+<p><code>void setSpecialEffect (unsigned int which, unsigned int target_A,
+unsigned int target_B)<br>
+void setAlphaBlendingSpecialEffectCoefficients (unsigned int target_A, unsigned
+int target_B)<br>
+void setBrightnessSpecialEffectCoefficient (unsigned int brightness)</code></p>
+
+<p>The first one, <em>setSpecialEffect</em>, activates the required special
+effect or deactivates all special effects.</p>
+
+<p><em>which</em> parameter can be one of the following values:</p>
+
+<p><code>SPECIALEFFECT_TYPE_DISABLE<br>
+SPECIALEFFECT_TYPE_ALPHABLEND<br>
+SPECIALEFFECT_TYPE_BRIGHTNESSINCREASE<br>
+SPECIALEFFECT_TYPE_BRIGHTNESSDECREASE</code></p>
+
+<p>When the desired effect is the alpha blend, two masks (<em>target_A</em> and
+<em>target_B</em>) are needed to specify which elements should blend with the
+other elements. When brightness increase/decrease is specified, instead, you
+just need to select the first set of elements (<em>target_A</em>). The
+following values can be used for the target masks:</p>
+
+<p><code>SPECIALEFFECT_TARGET_BACKGROUND_0<br>
+SPECIALEFFECT_TARGET_BACKGROUND_1<br>
+SPECIALEFFECT_TARGET_BACKGROUND_2<br>
+SPECIALEFFECT_TARGET_BACKGROUND_3<br>
+SPECIALEFFECT_TARGET_SPRITES<br>
+SPECIALEFFECT_TARGET_BACKDROP<br>
+SPECIALEFFECT_TARGET_EVERYTHING</code></p>
+
+<p>When alpha blending is active, two pixels will (eventually) blend according
+to the coefficients set by the
+<em>setAlphaBlendingSpecialEffectCoefficients</em> function. The valid values
+for both targets are from 0 to 16, and result will be the <strong>sum</strong>
+of the two divided by 16.</p>
+
+<p>When brightness increase/decrease is active, instead, the
+<em>brightness</em> coefficient can be set by the
+<em>setBrightnessSpecialEffectCoefficient</em> function. 0 (zero) means 'no
+change' whereas 16 means 'full black' when in brightness decrease mode or 'full
+white' when in brightness increase mode.</p>
+
+<p>You can read the details about special effects <a href="http://problemkaputt.de/gbatek.htm#lcdiocolorspecialeffects">here</a>
+(GBAtek)</p>
+
+<p>There is then a single function to set mosaic coefficients, since mosaic
+mode effect can be activated directly on a per-background or a per-sprite
+basis. The function is:</p>
+
+<p><code>void setMosaicCoefficients (unsigned int BG_Mosaic_x, unsigned int
+BG_Mosaic_y, unsigned int OBJ_Mosaic_x, unsigned int OBJ_Mosaic_y)</code></p>
+
+<p><em>BG_Mosaic_x</em> and <em>BG_Mosaic_y</em> are the horizontal and
+vertical mosaic coefficients for the backgrounds.</p>
+
+<p><em>OBJ_Mosaic_x</em> and <em>OBJ_Mosaic_y</em> are the horizontal and
+vertical mosaic coefficients for the objects (sprites).</p>
+
+<p>Valid values for these coefficients are 0 (zero) to 7. Zero means the effect
+is disabled.</p>
+
+<p>You can read the details about mosaic <a href="http://problemkaputt.de/gbatek.htm#lcdiomosaicfunction">here</a>
+(GBAtek)</p>
+
+<p>Then there are functions to manage windows. It's possible to define two
+rectangular windows (window 0 and window 1) and a particular window called
+'object window', defined using the sprites of the window type. When at least
+one window is active, the pixels that aren't part of any active windows make
+the so called 'outside' window.</p>
+
+<p><code>void activateWindow (unsigned int windows)<br>
+void deactivateWindow (unsigned int windows)<br>
+void setWindow0Coordinates (unsigned int x0, unsigned int y0, unsigned int x1,
+unsigned int y1)<br>
+void setWindow1Coordinates (unsigned int x0, unsigned int y0, unsigned int x1,
+unsigned int y1)<br>
+void setWindowControl (unsigned int enabled_inside_win0, unsigned int
+enabled_inside_win1, unsigned int enabled_outside, unsigned int
+enabled_objects)</code></p>
+
+<p>The <em>activateWindow</em> and <em>deactivateWindow</em> functions turn
+on/off the selected window(s).</p>
+
+<p><em>windows</em> parameter is a mask that can use (even a combination of)
+the following defined values:</p>
+
+<p><code>WINDOW0<br>
+WINDOW1<br>
+SPRITEWINDOW</code></p>
+
+<p>The <em>setWindow0Coordinates</em> and <em>setWindow1Coordinates</em>
+functions are used to define window 0 and window 1 boundaries. The four
+parameters are:</p>
+
+<p><em>x0</em> and <em>y0</em> are the coordinates of the upper left corner of
+the window</p>
+
+<p><em>x1</em> and <em>y1</em> are the coordinates of the lower right corner of
+the window</p>
+
+<p>border values are defined as <strong>inside</strong> the window itself.</p>
+
+<p>The <em>setWindowControl</em> function is used to set which elements appear
+in the four areas (inside window 0, if active - inside window 1, if active -
+outside any active windows - inside object window)</p>
+
+<p>Valid values for <em>enabled_inside_win0</em>, <em>enabled_inside_win1</em>,
+<em>enabled_outside</em> and <em>enabled_objects</em> are (a combination of)
+the following:</p>
+
+<p><code>WINDOW_NOTHING<br>
+WINDOW_BACKGROUND_0<br>
+WINDOW_BACKGROUND_1<br>
+WINDOW_BACKGROUND_2<br>
+WINDOW_BACKGROUND_3<br>
+WINDOW_SPRITES<br>
+WINDOW_SPECIALEFFECTS<br>
+WINDOW_EVERYTHING</code></p>
+
+<p>(it's possible to show nothing at all inside the selected area, or for
+example choose if special effects can take place or not in there)</p>
+
+<p>You can read the details about windows <a href="http://problemkaputt.de/gbatek.htm#lcdiowindowfeature">here</a>
+(GBAtek)</p>
+
+<p></p>
+
+
+
+</body></html>
